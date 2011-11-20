@@ -1,16 +1,24 @@
 #include <stdio.h>
 #include <pthread.h>
+#include <string.h>
 #include "main.h"
 
 int main (int argc, char *argv[]){
 	int flag = 1;
-	char *text= NULL;
+	char text[1000];
+	char quit[]= "quit\n";
 	while (flag){
 		printf("mysh$ ");
-		if (fgets(text, 100, stdin)){
-			printf("The command was %s", text);
-			parseArg(text);
-		}	
+		if (fgets(text, 1000, stdin)){
+			
+			if(strcmp(text, quit)==0){
+				return 0;
+			}	
+			else{
+				printf("The command was %s", text);
+				parseArg(text);
+			}
+		}		
 	}
 	return 0;
 }
