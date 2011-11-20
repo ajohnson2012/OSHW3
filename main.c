@@ -7,7 +7,7 @@ int main (int argc, char *argv[]){
 	char *text= NULL;
 	while (flag){
 		printf("mysh$ ");
-		if (fgets(text, sizeof(text), stdin)){
+		if (fgets(text, 100, stdin)){
 			printf("The command was %s", text);
 			parseArg(text);
 		}	
