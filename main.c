@@ -23,5 +23,6 @@ int main (int argc, char *argv[]){
 	return 0;
 }
 void parseArg(char* args){
-	printf("%s", args);
+	char* arg=strtok(args,"\0");
+	printf("%s", arg);
 }
