@@ -10,18 +10,21 @@ int main (int argc, char *argv[]){
 	while (flag){
 		printf("mysh$ ");
 		if (fgets(text, 1000, stdin)){
-			
 			if(strcmp(text, quit)==0){
 				return 0;
 			}	
 			else{
 				printf("The command was %s", text);
-				parseArg(text);
+				parseArg(strtok(text, " "));
 			}
 		}		
 	}
 	return 0;
 }
 void parseArg(char* args){
-	printf("%s", args);
+	char *index = args;
+	while (index != NULL){
+		printf("%s\n", index);
+		index = strtok(NULL, " ");
+	}
 }
