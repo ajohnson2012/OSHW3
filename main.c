@@ -43,6 +43,10 @@ int runcmd(char *cmd){
     char* errbuf;
 	if ((child_pid=vfork()) == 0) {
 		//In child
+		if (strcmp(args[0], "cd\n") == 0){
+			if (chdir(args[1]) == -1)
+				printf("There was an error while changing directories\n");
+		}
 		if (execvp(args[0], args) ==-1){
 			sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
             perror(errbuf);
