@@ -25,21 +25,34 @@ int main (int argc, char *argv[]){
 				args[0]=strtok(text, " ");
 				printf("The command was %s\n", args[0]);
 				parseArg(text);
-				if ((pid=vfork()) == 0) {
-					//In child
-					if (execvp("/bin/ls", NULL) ==-1){
-						printf("GREAT GOLLY MISS MOLLY THERE WAS AN ERROR");
-					}
-				}
-				else { 
-					//In parent
-					
-				}
+				runcmd(args[0]);	
 			}
 		}		
 	}
 	return 0;
 }
+
+
+int runcmd(char *cmd){
+	pid_t child_pid;	
+	if ((pid=vfork()) == 0) {
+		//In child
+		if (execvp("~/bin/ls", {-a,NULL}) ==-1){
+			printf("GREAT GOLLY MISS MOLLY THERE WAS AN ERROR");
+		}
+	}
+	else { 
+	//In parent
+		do{
+			pid_t tpid=wait(&child_status);
+			if(tpid!=child_pid) process_terminated(tpid);
+		}while(tpid!=child_pid);	
+	}
+}
+
+
+
+
 void parseArg(char* line){
 	int i=1;
 	char* temp;
