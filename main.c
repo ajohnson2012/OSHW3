@@ -4,13 +4,14 @@
 #include "main.h"
 
 char* args[10];
-
+int flag = 1;
+char text[1000];
+char quit[]= "quit\n";
+char* myShellName = getenv("MYPS");
+char* homeName= getenv("HOME");	
 int main (int argc, char *argv[]){
-	int flag = 1;
-	char text[1000];
-	char quit[]= "quit\n";
-	char* myShellName = getenv("MYPS");
-	char* homeName= getenv("HOME");	
+	pid_t child_pid;
+	int child_status;
 	while (flag){
 		if (myShellName == NULL)
 			printf("mysh$ ");
@@ -24,6 +25,16 @@ int main (int argc, char *argv[]){
 				args[0]=strtok(text, " ");
 				printf("The command was %s\n", args[0]);
 				parseArg(text);
+				if ((pid=vfork()) == 0) {
+					//In child
+					if (execvp("/bin/ls", NULL) ==-1){
+						printf("GREAT GOLLY MISS MOLLY THERE WAS AN ERROR");
+					}
+				}
+				else { 
+					//In parent
+					
+				}
 			}
 		}		
 	}
@@ -41,5 +52,6 @@ void parseArg(char* line){
 		//}
 		printf("%s\n", args[i]);
 		i++;
-	}	
+	}
+	
 }
