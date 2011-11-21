@@ -2,6 +2,8 @@
 #include <pthread.h>
 #include <string.h>
 #include "main.h"
+#include <stdlib.h>
+#include <sys/types.h>
 
 char* args[10];
 int flag = 1;
@@ -24,7 +26,7 @@ int main (int argc, char *argv[]){
 				return 0;
 			}	
 			else{
-				args[0]=strtok(text, " ");
+				args[0]=strtok(text, "\n ");
 				printf("The command was %s\n", args[0]);
 				parseArg(text);
 				runcmd(args[0]);	
