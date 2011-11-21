@@ -9,9 +9,13 @@ int main (int argc, char *argv[]){
 	int flag = 1;
 	char text[1000];
 	char quit[]= "quit\n";
-	
+	char* myShellName = getenv("MYPS");
+	char* homeName= getenv("HOME");	
 	while (flag){
-		printf("mysh$ ");
+		if (myShellName == NULL)
+			printf("mysh$ ");
+		else 
+			printf(myShellName);
 		if (fgets(text, 1000, stdin)){
 			if(strcmp(text, quit)==0){
 				return 0;
