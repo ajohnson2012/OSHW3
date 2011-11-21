@@ -7,16 +7,19 @@ char* args[10];
 int flag = 1;
 char text[1000];
 char quit[]= "quit\n";
-char* myShellName = getenv("MYPS");
-char* homeName= getenv("HOME");	
+char* myShellName; 
+char* homeName;
 int main (int argc, char *argv[]){
+	myShellName= getenv("MYPS");
+	homeName= getenv("HOME");
 	pid_t child_pid;
 	int child_status;
+	printf("TEST");
 	while (flag){
 		if (myShellName == NULL)
 			printf("mysh$ ");
 		else 
-			printf(myShellName);
+			printf("%s",myShellName);
 		if (fgets(text, 1000, stdin)){
 			if(strcmp(text, quit)==0){
 				return 0;
@@ -35,18 +38,21 @@ int main (int argc, char *argv[]){
 
 int runcmd(char *cmd){
 	pid_t child_pid;	
-	if ((pid=vfork()) == 0) {
+	if ((child_pid=vfork()) == 0) {
 		//In child
-		if (execvp("~/bin/ls", {-a,NULL}) ==-1){
+		if (execvp(args[0], args) ==-1){
 			printf("GREAT GOLLY MISS MOLLY THERE WAS AN ERROR");
 		}
 	}
 	else { 
 	//In parent
-		do{
-			pid_t tpid=wait(&child_status);
-			if(tpid!=child_pid) process_terminated(tpid);
+		/*do{
+		//	pid_t tpid=wait(&child_status);
+		//	if(tpid!=child_pid) {
+			//	process_terminated(tpid);
+			}
 		}while(tpid!=child_pid);	
+*/	
 	}
 }
 
@@ -66,5 +72,5 @@ void parseArg(char* line){
 		printf("%s\n", args[i]);
 		i++;
 	}
-	
+	args[i+1]=NULL;	
 }
