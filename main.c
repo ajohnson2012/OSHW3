@@ -29,7 +29,7 @@ void parseArg(char* line){
 	int i=1;
 	char* temp;
 //	printf("line was:%s",line);
-	while((temp=strtok(NULL,"\n "))!=NULL){
+	while((temp=strtok(NULL,"\n "))!=NULL&&(i<10)){
 		//printf("[DEBUG] char at begining is:%d",line[0]);
 		args[i] = temp;
 		//if(args[i]=='0'){
