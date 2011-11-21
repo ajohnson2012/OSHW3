@@ -1,4 +1,4 @@
-CC=gcc
+CC=gcc -g -Wall
 CFLAGS=-c
 all: program
 program: main.o

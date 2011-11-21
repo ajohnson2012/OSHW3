@@ -27,7 +27,7 @@ int main (int argc, char *argv[]){
 			}	
 			else{
 				args[0]=strtok(text, "\n ");
-				printf("The command was %s\n", args[0]);
+			//	printf("The command was %s\n", args[0]);
 				parseArg(text);
 				runcmd(args);	
 			}
@@ -39,18 +39,21 @@ int main (int argc, char *argv[]){
 
 int runcmd(char *cmd){
 	pid_t child_pid;
-	int child_status;	
+	int child_status;
+    char* errbuf;
 	if ((child_pid=vfork()) == 0) {
 		//In child
 		if (execvp(args[0], args) ==-1){
-			printf("GREAT GOLLY MISS MOLLY THERE WAS AN ERROR \n");
+			sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
+            perror(errbuf);
+    //        printf("GREAT GOLLY MISS MOLLY THERE WAS AN ERROR \n");
 		}
 		_exit(0);
 	}
 	else { 
 	//In parent
 		wait(&child_status);
-		printf("AWWW SHIT SON IM THE BIG DADDY PROCESS \n");
+		//printf("AWWW SHIT SON IM THE BIG DADDY PROCESS \n");
 		/*do{
 			pid_t tpid=wait(&child_status);
 			if(tpid!=child_pid) {
@@ -74,7 +77,7 @@ void parseArg(char* line){
 		//if(args[i]=='0'){
 		//	printf("null char");
 		//}
-		printf("%s\n", args[i]);
+		//printf("%s\n", args[i]);
 		i++;
 	}
 	args[i+1]=NULL;	
