@@ -4,6 +4,8 @@
 #include "main.h"
 #include <stdlib.h>
 #include <sys/types.h>
+#include <unistd.h>
+#include <errno.h>
 
 char* args[10];
 int flag = 1;
@@ -40,16 +42,34 @@ int main (int argc, char *argv[]){
 int runcmd(char *cmd){
 	pid_t child_pid;
 	int child_status;
-    char* errbuf;
+    	char* errbuf;
 	if ((child_pid=vfork()) == 0) {
 		//In child
-		if (strcmp(args[0], "cd\n") == 0){
-			if (chdir(args[1]) == -1)
-				printf("There was an error while changing directories\n");
+		//Check to see if it's a chdir command
+		if (strcmp(args[0], "cd") == 0){
+			//printf("Result of changing dir was: %d \n", chdir(args[1]));
+			printf("Args[1] is: %s", args[1]);
+			int result = chdir(args[1]);
+			if (result == 0){
+				printf("Directory changed");
+			}else{
+				switch(result){
+					case EACCES: perror("Permission denied");break;
+					case EIO: perror("An input output error occurred"); break;
+					case ENAMETOOLONG: perror("Path is to long"); break;
+					case ENOTDIR: perror("A component of path not a diretory"); break;
+					case ENOENT: perror("No such file or directory"); printf("enoent\n"); 
+					//default: perror("Couldn't change directory to %s", (char *) args[1]);
+					printf("Couldn't change directory to %s");
+				}
+			}
 		}
+			//if (chdir(args[1]) == -1)
+		//	printf("There was an error while changing directories\n");
+		
 		if (execvp(args[0], args) ==-1){
 			sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
-            perror(errbuf);
+            		perror(errbuf);
     //        printf("GREAT GOLLY MISS MOLLY THERE WAS AN ERROR \n");
 		}
 		_exit(0);
@@ -66,10 +86,8 @@ int runcmd(char *cmd){
 		}while(tpid!=child_pid);	*/
 	
 	}
+	return 0;
 }
-
-
-
 
 void parseArg(char* line){
 	int i=1;
