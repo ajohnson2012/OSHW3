@@ -56,7 +56,12 @@ int runcmd(char **cmd){
 		//printf("Result of changing dir was: %d \n", chdir(args[1]));
 		printf("Args[1] is: %s \n", args[1]);
 		printf("Home is: %s \n", homeName);
-		int result = chdir(args[1]);
+		int result;
+		if (args[1]==NULL){
+			result=chdir(homeName);
+		} else {
+			result = chdir(args[1]);
+		}
 		if (result == 0){
 			char *cwd;
 			printf("%s \n", getcwd(cwd, 1000));
