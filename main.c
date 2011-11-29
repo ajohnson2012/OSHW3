@@ -15,14 +15,16 @@ char* myShellName;
 char* homeName;
 int main (int argc, char *argv[]){
 	myShellName= getenv("MYPS");
+	if (myShellName == NULL){
+		printf("Shell env was null, making it mysh \n");
+		myShellName="mysh$ ";
+	}
 	homeName= getenv("HOME");
+	printf("%s \n", homeName);
 	pid_t child_pid;
 	int child_status;
 	while (flag){
-		if (myShellName == NULL)
-			printf("mysh$ ");
-		else 
-			printf("%s",myShellName);
+		printf("%s", myShellName);	
 		if (fgets(text, 1000, stdin)){
 			if(strcmp(text, quit)==0){
 				return 0;
@@ -43,26 +45,35 @@ int runcmd(char *cmd){
 	pid_t child_pid;
 	int child_status;
     	char* errbuf;
-	if ((child_pid=vfork()) == 0) {
+	child_pid = vfork();
+	printf("Child Process ID: %d \n", child_pid);
+	if (child_pid == -1){
+		printf("There was an error in the process creation");
+		_exit(1);
+	}
+	if (child_pid == 0) {
 		//In child
 		//Check to see if it's a chdir command
 		if (strcmp(args[0], "cd") == 0){
 			//printf("Result of changing dir was: %d \n", chdir(args[1]));
-			printf("Args[1] is: %s", args[1]);
+			printf("Args[1] is: %s \n", args[1]);
+			printf("Home is: %s \n", homeName);
 			int result = chdir(args[1]);
 			if (result == 0){
 				printf("Directory changed");
 			}else{
 				switch(result){
-					case EACCES: perror("Permission denied");break;
-					case EIO: perror("An input output error occurred"); break;
-					case ENAMETOOLONG: perror("Path is to long"); break;
-					case ENOTDIR: perror("A component of path not a diretory"); break;
-					case ENOENT: perror("No such file or directory"); printf("enoent\n"); 
+					case EACCES: printf("Permission denied");break;
+					case EIO: printf("An input output error occurred"); break;
+					case ENAMETOOLONG: printf("Path is to long"); break;
+					case ENOTDIR: printf("A component of path not a diretory"); break;
+					case ENOENT: printf("No such file or directory"); printf("enoent\n"); 
 					//default: perror("Couldn't change directory to %s", (char *) args[1]);
 					printf("Couldn't change directory to %s");
+					_exit(1);
 				}
 			}
+			_exit(0);
 		}
 			//if (chdir(args[1]) == -1)
 		//	printf("There was an error while changing directories\n");
@@ -70,7 +81,7 @@ int runcmd(char *cmd){
 		if (execvp(args[0], args) ==-1){
 			sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
             		perror(errbuf);
-    //        printf("GREAT GOLLY MISS MOLLY THERE WAS AN ERROR \n");
+			_exit(1);
 		}
 		_exit(0);
 	}
