@@ -60,6 +60,7 @@ int runcmd(char **cmd){
 		if (args[1]==NULL){
 			result=chdir(homeName);
 		} else {
+			//args[1]=parseOutPath(args[1]);	
 			result = chdir(args[1]);
 		}
 		if (result == 0){
@@ -111,18 +112,30 @@ int runcmd(char **cmd){
 	return 0;
 	
 }
-
+char* parseOutPath(char* argToCheck){
+	if (argToCheck[0] == '$'){
+		char* temp;
+		temp=strtok(argToCheck,'/');
+		char* getRidOFMoney = NULL;
+		int i;
+		for (i =0; i < strlen(temp); i++){
+			getRidOFMoney[i]=temp[i+1];
+		}
+		temp=getenv(getRidOfMoney);
+		return strcat(temp, argToCheck);
+	}else {
+		return argToCheck;
+	}
+}
 void parseArg(char* line){
 	int i=1;
-	char* temp;
+	char* temp = NULL;
 //	printf("line was:%s",line);
-	while((temp=strtok(NULL,"\n "))!=NULL&&(i<10)){
+	while((temp=strtok(temp,"\n "))!=NULL&&(i<10)){
+		//If temp has $, get env var of temp and set to args
+		temp = parseOutPath(temp);
 		//printf("[DEBUG] char at begining is:%d",line[0]);
 		args[i] = temp;
-		//if(args[i]=='0'){
-		//	printf("null char");
-		//}
-		//printf("%s\n", args[i]);
 		i++;
 	}
 	args[i+1]=NULL;	
