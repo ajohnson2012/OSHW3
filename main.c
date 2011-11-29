@@ -24,6 +24,7 @@ int main (int argc, char *argv[]){
 	pid_t child_pid;
 	int child_status;
 	while (flag){
+		clearArray(args, 10);
 		printf("%s", myShellName);	
 		if (fgets(text, 1000, stdin)){
 			if(strcmp(text, quit)==0){
@@ -35,59 +36,63 @@ int main (int argc, char *argv[]){
 				parseArg(text);
 				runcmd(args);	
 			}
-		}		
+		}
 	}
 	return 0;
 }
+void clearArray(char ** array, int size){
+	int i;
+	for (i = 0; i < size; i++){
+		array[i]='\0';
+	}
+	return;
+}
 
-
-int runcmd(char *cmd){
+int runcmd(char **cmd){
 	pid_t child_pid;
 	int child_status;
     	char* errbuf;
-	child_pid = vfork();
-	printf("Child Process ID: %d \n", child_pid);
-	if (child_pid == -1){
-		printf("There was an error in the process creation");
-		_exit(1);
-	}
-	if (child_pid == 0) {
-		//In child
-		//Check to see if it's a chdir command
-		if (strcmp(args[0], "cd") == 0){
-			//printf("Result of changing dir was: %d \n", chdir(args[1]));
-			printf("Args[1] is: %s \n", args[1]);
-			printf("Home is: %s \n", homeName);
-			int result = chdir(args[1]);
-			if (result == 0){
-				printf("Directory changed");
-			}else{
-				switch(result){
-					case EACCES: printf("Permission denied");break;
-					case EIO: printf("An input output error occurred"); break;
-					case ENAMETOOLONG: printf("Path is to long"); break;
-					case ENOTDIR: printf("A component of path not a diretory"); break;
-					case ENOENT: printf("No such file or directory"); printf("enoent\n"); 
-					//default: perror("Couldn't change directory to %s", (char *) args[1]);
-					printf("Couldn't change directory to %s");
-					_exit(1);
-				}
+	if (strcmp(args[0], "cd") == 0){
+		//printf("Result of changing dir was: %d \n", chdir(args[1]));
+		printf("Args[1] is: %s \n", args[1]);
+		printf("Home is: %s \n", homeName);
+		int result = chdir(args[1]);
+		if (result == 0){
+			char *cwd;
+			printf("%s \n", getcwd(cwd, 1000));
+			printf("Directory changed\n");
+		}else{
+			switch(result){
+				case EACCES: printf("Permission denied");break;
+				case EIO: printf("An input output error occurred"); break;
+				case ENAMETOOLONG: printf("Path is to long"); break;
+				case ENOTDIR: printf("A component of path not a diretory"); break;
+				case ENOENT: printf("No such file or directory"); printf("enoent\n"); 
+				//default: perror("Couldn't change directory to %s", (char *) args[1]);
+				printf("Couldn't change directory to %s");
+				_exit(1);
 			}
-			_exit(0);
 		}
-			//if (chdir(args[1]) == -1)
-		//	printf("There was an error while changing directories\n");
-		
-		if (execvp(args[0], args) ==-1){
-			sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
-            		perror(errbuf);
+		//_exit(0);
+	}else{
+		child_pid = vfork();
+		//printf("Child Process ID: %d \n", child_pid);
+		if (child_pid == -1){
+			printf("There was an error in the process creation");
 			_exit(1);
 		}
+		if (child_pid == 0) {
+		//In child
+			if (execvp(args[0], args) ==-1){
+				sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
+       		     		perror(errbuf);
+				_exit(1);
+			}
 		_exit(0);
-	}
-	else { 
-	//In parent
-		wait(&child_status);
+		}
+		else { 
+		//In parent
+			wait(&child_status);
 		//printf("AWWW SHIT SON IM THE BIG DADDY PROCESS \n");
 		/*do{
 			pid_t tpid=wait(&child_status);
@@ -96,8 +101,10 @@ int runcmd(char *cmd){
 			}
 		}while(tpid!=child_pid);	*/
 	
+		}
 	}
 	return 0;
+	
 }
 
 void parseArg(char* line){
