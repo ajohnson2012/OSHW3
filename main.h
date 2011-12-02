@@ -3,4 +3,6 @@
 void parseArgs(char* line);
 int runcmd(char **cmd);
 void clearArray(char** array, int size);
+int checkForRedirection(char* args[], int arglen);
+int findAmpLamp(char* arg);
 #endif

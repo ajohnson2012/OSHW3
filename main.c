@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
+#include "filereader.h"
 
 char* args[10];
 int flag = 1;
@@ -24,8 +25,8 @@ int main (int argc, char *argv[]){
 	}
 	homeName= getenv("HOME");
 	printf("%s \n", homeName);
-	pid_t child_pid;
-	int child_status;
+//	pid_t child_pid;
+//	int child_status;
 	int returnStatus;
 
 	if(argc>1){
@@ -49,7 +50,7 @@ int main (int argc, char *argv[]){
 			else{
 				args[0]=strtok(text, "\n ");
 			//	printf("The command was %s\n", args[0]);
-				parseArg(text);
+				parseArgs(text);
 				runcmd(args);	
 			}
 		}
@@ -157,7 +158,7 @@ int runcmd(char **cmd){
 	
 }
 
-void parseArg(char* line){
+void parseArgs(char* line){
 	int i=1;
 	char* temp = NULL;
 	while((temp=strtok(NULL,"\n "))!=NULL&&(i<10)){
