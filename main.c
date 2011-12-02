@@ -14,6 +14,8 @@ char quit[]= "quit\n";
 char* myShellName; 
 char* homeName;
 int background=0;
+
+
 int main (int argc, char *argv[]){
 	myShellName= getenv("MYPS");
 	if (myShellName == NULL){
@@ -62,29 +64,30 @@ void clearArray(char ** array, int size){
 	return;
 }
 int checkForRedirection(char* args[], int arglen){
-char * stderr = "2>";
-char stdin= '<';
-char stdout = '>';
-char* stderrPtr;
-char* stdinPtr;
-char* stdoutPtr;
-
-int i=0;
-for(i =0; i < arglen; i++){
-	stderrPtr=strstr(args[i], stderr);
-	stdinPtr=strchr (args[i], stdin);
-	stdoutPtr=strchr (args[i], stdout);
-	if (stderrPtr !=NULL){
-		printf("stderr redirection\n");
+	char * stderr = "2>";
+	char stdin= '<';
+	char stdout = '>';
+	char* stderrPtr;
+	char* stdinPtr;
+	char* stdoutPtr;
+	printf("Checking for redirection janx");
+	int i=0;
+	for(i =0; i < arglen; i++){
+		stderrPtr=strstr(args[i], stderr);
+		stdinPtr=strchr (args[i], stdin);
+		stdoutPtr=strchr (args[i], stdout);
+		if (stderrPtr !=NULL){
+			
+			printf("stderr redirection\n");
+		}
+		if(stderrPtr !=NULL){
+			printf("stdin redirection\n");
+		}
+		if(stdoutPtr !=NULL){
+			printf("stdout redirection\n");
+		}
 	}
-	if(stderrPtr !=NULL){
-		printf("stdin redirection\n");
-	}
-	if(stdoutPtr !=NULL){
-		printf("stdout redirection\n");
-	}
-}
-return 1;
+	return 1;
 }
 
 int runcmd(char **cmd){
@@ -99,7 +102,6 @@ int runcmd(char **cmd){
 		if (args[1]==NULL){
 			result=chdir(homeName);
 		} else {
-			//args[1]=parseOutPath(args[1]);	
 			result = chdir(args[1]);
 		}
 		if (result == 0){
@@ -118,10 +120,10 @@ int runcmd(char **cmd){
 				_exit(1);
 			}
 		}
-		//_exit(0);
+
 	}else{
 		child_pid = vfork();
-		//printf("Child Process ID: %d \n", child_pid);
+
 		if (child_pid == -1){
 			printf("There was an error in the process creation");
 			_exit(1);
@@ -154,29 +156,14 @@ int runcmd(char **cmd){
 	return 0;
 	
 }
-/*char* parseOutPath(char* argToCheck){
-	if (argToCheck[0] == '$'){
-		char* temp;
-		temp=strtok(argToCheck,'/');
-		char* getRidOFMoney = NULL;
-		int i;
-		for (i =0; i < strlen(temp); i++){
-			getRidOFMoney[i]=temp[i+1];
-		}
-		temp=getenv(getRidOfMoney);
-		return strcat(temp, argToCheck);
-	}else {
-		return argToCheck;
-	}
-}*/
+
 void parseArg(char* line){
 	int i=1;
 	char* temp = NULL;
-//	printf("line was:%s",line);
 	while((temp=strtok(NULL,"\n "))!=NULL&&(i<10)){
 		//If temp has $, get env var of temp and set to args
 		//temp = parseOutPath(temp);
-		//printf("[DEBUG] char at begining is:%d",line[0]);
+
 		if(!findAmpLamp(temp)){
 			args[i] = temp;
 			i++;
