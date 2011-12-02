@@ -13,6 +13,7 @@ char text[1000];
 char quit[]= "quit\n";
 char* myShellName; 
 char* homeName;
+int background=0;
 int main (int argc, char *argv[]){
 	myShellName= getenv("MYPS");
 	if (myShellName == NULL){
@@ -25,6 +26,7 @@ int main (int argc, char *argv[]){
 	int child_status;
 	while (flag){
 		clearArray(args, 10);
+		background=0;
 		printf("%s", myShellName);	
 		if (fgets(text, 1000, stdin)){
 			if(strcmp(text, quit)==0){
@@ -98,7 +100,10 @@ int runcmd(char **cmd){
 		}
 		else { 
 		//In parent
+
+		if(!background){
 			wait(&child_status);
+		}
 		//printf("AWWW SHIT SON IM THE BIG DADDY PROCESS \n");
 		/*do{
 			pid_t tpid=wait(&child_status);
@@ -112,7 +117,7 @@ int runcmd(char **cmd){
 	return 0;
 	
 }
-char* parseOutPath(char* argToCheck){
+/*char* parseOutPath(char* argToCheck){
 	if (argToCheck[0] == '$'){
 		char* temp;
 		temp=strtok(argToCheck,'/');
@@ -126,17 +131,29 @@ char* parseOutPath(char* argToCheck){
 	}else {
 		return argToCheck;
 	}
-}
+}*/
 void parseArg(char* line){
 	int i=1;
 	char* temp = NULL;
 //	printf("line was:%s",line);
-	while((temp=strtok(temp,"\n "))!=NULL&&(i<10)){
+	while((temp=strtok(NULL,"\n "))!=NULL&&(i<10)){
 		//If temp has $, get env var of temp and set to args
-		temp = parseOutPath(temp);
+		//temp = parseOutPath(temp);
 		//printf("[DEBUG] char at begining is:%d",line[0]);
-		args[i] = temp;
-		i++;
+		if(findAmpLamp(temp)==0){
+			args[i] = temp;
+			i++;
+		}
 	}
 	args[i+1]=NULL;	
+}
+
+int findAmpLamp(char* arg){
+	if(strcmp(arg,"&")==0){
+		printf("Found that & in arg:%s\n",arg);
+		background=1;
+		return 1;
+	}else return 0;
+
+
 }
