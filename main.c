@@ -24,6 +24,18 @@ int main (int argc, char *argv[]){
 	printf("%s \n", homeName);
 	pid_t child_pid;
 	int child_status;
+	int returnStatus;
+
+	if(argc>1){
+		printf("There are %d arguments\n", argc);
+		printf("The filename to use is: %s\n", argv[1]);
+		returnStatus=readFile(argv[1]);
+		if(returnStatus==-1){
+			printf("ERROR no such file exists");
+			return -1;
+		}
+		return 0;
+	}
 	while (flag){
 		clearArray(args, 10);
 		background=0;
@@ -48,6 +60,31 @@ void clearArray(char ** array, int size){
 		array[i]='\0';
 	}
 	return;
+}
+int checkForRedirection(char* args[], int arglen){
+char * stderr = "2>";
+char stdin= '<';
+char stdout = '>';
+char* stderrPtr;
+char* stdinPtr;
+char* stdoutPtr;
+
+int i=0;
+for(i =0; i < arglen; i++){
+	stderrPtr=strstr(args[i], stderr);
+	stdinPtr=strchr (args[i], stdin);
+	stdoutPtr=strchr (args[i], stdout);
+	if (stderrPtr !=NULL){
+		printf("stderr redirection\n");
+	}
+	if(stderrPtr !=NULL){
+		printf("stdin redirection\n");
+	}
+	if(stdoutPtr !=NULL){
+		printf("stdout redirection\n");
+	}
+}
+return 1;
 }
 
 int runcmd(char **cmd){
@@ -140,12 +177,13 @@ void parseArg(char* line){
 		//If temp has $, get env var of temp and set to args
 		//temp = parseOutPath(temp);
 		//printf("[DEBUG] char at begining is:%d",line[0]);
-		if(findAmpLamp(temp)==0){
+		if(!findAmpLamp(temp)){
 			args[i] = temp;
 			i++;
 		}
 	}
 	args[i+1]=NULL;	
+	checkForRedirection(args, i);
 }
 
 int findAmpLamp(char* arg){
