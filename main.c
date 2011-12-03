@@ -143,7 +143,7 @@ int runcmd(char **cmd){
 				case ENOTDIR: printf("A component of path not a diretory"); break;
 				case ENOENT: printf("No such file or directory"); printf("enoent\n"); 
 				//default: perror("Couldn't change directory to %s", (char *) args[1]);
-				printf("Couldn't change directory to %s");
+				printf("Couldn't change directory to %s",args[1]);
 				_exit(1);
 			}
 		}
