@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <pthread.h>
+
 #include <string.h>
 #include "main.h"
 #include <stdlib.h>
@@ -168,6 +167,7 @@ int runcmd(char **cmd){
 
 		if(!background){
 			wait(&child_status);
+			//Need to add stuff to redirect output
 		}
 		//printf("AWWW SHIT SON IM THE BIG DADDY PROCESS \n");
 		/*do{
