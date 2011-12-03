@@ -18,7 +18,7 @@ int readFile(char* filename){
 			return 0;
 		}	
 		else{
-			args[0]=strtok(str, " ");
+			args[0]=strtok(str, " \n");
 			printf("The command was %s\n", args[0]);
 			parseArgs(str);
 			runcmd(args[0]);	
