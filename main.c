@@ -69,52 +69,53 @@ void clearArray(char ** array, int size){
 	}
 	return;
 }
-int checkForRedirection(int arglen){
+int checkForRedirection(char* arg){
 	char * stderr = "2>";
 	char stdin= '<';
 	char stdout = '>';
 	char* stderrPtr;
 	char* stdinPtr;
 	char* stdoutPtr;
+	char* fileLoc;
 
-	printf("Checking for redirection janx\n");
-	int i=0;
-	for(i =0; i < arglen; i++){
-		stderrPtr=strstr(args[i], stderr);
-		stdinPtr=strchr (args[i], stdin);
-		stdoutPtr=strchr (args[i], stdout);
-		if (stderrPtr !=NULL){
-			printf("stderr redirection turning on.\n");
-			redir_stderr=1;
-			//new_stderr = open(&(args[i][1]), O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
-			if (new_stderr == -1) {
-				// Open failed: error-handling here
-				printf("idk what happened, shit.");
-			}
+	
+	stderrPtr=strstr(arg, stderr);
+	stdinPtr=strchr (arg, stdin);
+	stdoutPtr=strchr (arg, stdout);
+	if (stderrPtr !=NULL){
+		printf("stderr redirection turning on.\n");
+		redir_stderr=1;
+		//new_stderr = open(&(args[i][1]), O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+		if (new_stderr == -1) {
+			// Open failed: error-handling here
+			printf("idk what happened, shit.");
 		}
-		
-		if(stdinPtr !=NULL){
-			printf("stdin redirection turning on.\n");
-			redir_stdin=1;
-			//new_stdin = open(&(args[i][1]), O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
-			if(new_stdin==-1){
-				printf("idk what happened, shit.");
-			}
-
-		}
-		
-		if(stdoutPtr !=NULL){
-			printf("stdout redirection\n");
-			redir_stdout=1;
-			//printf("file to be used:%s", args[i][1]);
-			new_stdin = open("test.txt", O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
-			if(new_stdout==-1){
-				printf("idk what happened, shit.");
-			}
-		}
-		
+		return 1;
 	}
-	return 1;
+		
+	if(stdinPtr !=NULL){
+		printf("stdin redirection turning on.\n");
+		redir_stdin=1;
+		//new_stdin = open(&(args[i][1]), O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+		if(new_stdin==-1){
+			printf("idk what happened, shit.");
+		}
+		return 1;
+	}
+	
+	if(stdoutPtr !=NULL){
+		printf("stdout redirection\n");
+		redir_stdout=1;
+		//printf("file to be used:%s", args[i][1]);
+		fileLoc=stdoutPtr+1;
+		printf("%s\n",fileLoc);
+		new_stdout = open(fileLoc, O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+		if(new_stdout==-1){
+			printf("idk what happened, shit.");
+		}
+		return 1;
+	}
+	return 0;
 }
 
 int runcmd(char **cmd){
@@ -157,6 +158,16 @@ int runcmd(char **cmd){
 		}
 		if (child_pid == 0) {
 		//In child
+			if (redir_stdout) {
+			// Put new_stdout on file desc #1
+				if (dup2(new_stdout, 1) == -1) {
+					//perror(user_argv[0]);
+					printf("fuck");
+					_exit(127);
+				}
+				close(new_stdout); // Not needed anymore
+			}
+
 			if (execvp(args[0], args) ==-1){
 				sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
        		     		perror(errbuf);
@@ -166,9 +177,14 @@ int runcmd(char **cmd){
 		}
 		else { 
 		//In parent
+		
 
 		if(!background){
 			wait(&child_status);
+		}
+		if (redir_stdout) {
+			close(new_stdout); // Not needed anymore
+			redir_stdout = 0;
 		}
 		//printf("AWWW SHIT SON IM THE BIG DADDY PROCESS \n");
 		/*do{
@@ -191,13 +207,13 @@ void parseArgs(char* line){
 		//If temp has $, get env var of temp and set to args
 		//temp = parseOutPath(temp);
 
-		if(!findAmpLamp(temp)){
+		if(!findAmpLamp(temp) &&!checkForRedirection(temp)){
 			args[i] = temp;
 			i++;
 		}
 	}
 	args[i+1]=NULL;	
-	checkForRedirection(i);
+
 }
 
 int findAmpLamp(char* arg){
