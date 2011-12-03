@@ -175,9 +175,10 @@ int runcmd(char **cmd){
 			// Put new_stdout on file desc #0
 				printf("In child process with stdin redir error, new_stdin=%d\n",new_stdin);
 				if (dup2(new_stdin, 0) == -1) {
+					printf("SHIIITT");
 					_exit(127);
 				}
-				getArgsFromFile();
+				//getArgsFromFile();
 				close(new_stdin); // Not needed anymore
 			}
 			if (execvp(args[0], args) ==-1){
@@ -218,24 +219,29 @@ void getArgsFromFile(){
 		return -1;
 	}*/
 	printf("getting args from file\n");
-	char str[1000];
-	while(fgets(str, 1000, stdin) !=NULL){
-		printf("%s\n",str);
-		if(strcmp(str, "quit\n")==0){
-			printf("quitting\n");
-			return;
+	char str[1];
+	char ch;
+	char command[1000];
+	int count=0;
+	while(read(new_stdin, str, 1)>0){
+
+		printf("read: %c from file\n", str[0]);
+
+
+		if(str[0]==10){
+			printf("The command was: %s\n",command);
+			//command="";
 		}	
-		else{
-			//args[0]=strtok(str, " \n");
-			printf("The command was %s\n", str);
-			//parseArgs(str);
-			//runcmd(args[0]);	
-		}
-	}	
-
 	
-
+				
+		else{
+			command[count]=str[0];
+			count++;
+		}
+		str[0]=NULL;
+	}	
 }
+
 void parseArgs(char* line){
 	int i=1;
 	char* temp = NULL;
