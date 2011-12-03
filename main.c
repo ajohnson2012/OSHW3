@@ -26,17 +26,17 @@ int new_stderr=0;
 int main (int argc, char *argv[]){
 	myShellName= getenv("MYPS");
 	if (myShellName == NULL){
-		printf("Shell env was null, making it mysh \n");
+
 		myShellName="mysh$ ";
 	}
 	homeName= getenv("HOME");
-	printf("%s \n", homeName);
+	//printf("%s \n", homeName);
 
 	int returnStatus;
 
 	if(argc>1){
-		printf("There are %d arguments\n", argc);
-		printf("The filename to use is: %s\n", argv[1]);
+		//printf("There are %d arguments\n", argc);
+		//printf("The filename to use is: %s\n", argv[1]);
 		returnStatus=readFile(argv[1]);
 		if(returnStatus==-1){
 			printf("ERROR no such file exists");
@@ -85,7 +85,10 @@ int checkForRedirection(char* arg){
 	if (stderrPtr !=NULL){
 		printf("stderr redirection turning on.\n");
 		redir_stderr=1;
-		//new_stderr = open(&(args[i][1]), O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+		fileLoc=stdoutPtr+2;
+		printf("%s\n",fileLoc);
+		new_stdout = open(fileLoc, O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+
 		if (new_stderr == -1) {
 			// Open failed: error-handling here
 			printf("idk what happened, shit.");
@@ -96,7 +99,8 @@ int checkForRedirection(char* arg){
 	if(stdinPtr !=NULL){
 		printf("stdin redirection turning on.\n");
 		redir_stdin=1;
-		//new_stdin = open(&(args[i][1]), O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+		fileLoc=stdinPtr+1;
+		new_stdin = open(fileLoc, O_RDONLY|O_CREAT|O_TRUNC,(mode_t)0644);
 		if(new_stdin==-1){
 			printf("idk what happened, shit.");
 		}
@@ -132,11 +136,11 @@ int runcmd(char **cmd){
 		} else {
 			result = chdir(args[1]);
 		}
-		if (result == 0){
-			char *cwd;
-			printf("%s \n", getcwd(cwd, 1000));
+		if (result != 0){
+			//char *cwd;
+			//getcwd(cwd, 1000));
 			//printf("Directory changed\n");
-		}else{
+	
 			switch(result){
 				case EACCES: printf("Permission denied");break;
 				case EIO: printf("An input output error occurred"); break;
@@ -161,13 +165,27 @@ int runcmd(char **cmd){
 			if (redir_stdout) {
 			// Put new_stdout on file desc #1
 				if (dup2(new_stdout, 1) == -1) {
-					//perror(user_argv[0]);
-					printf("fuck");
+
 					_exit(127);
 				}
 				close(new_stdout); // Not needed anymore
 			}
 
+			if (redir_stderr) {
+			// Put new_stdout on file desc #2
+				if (dup2(new_stderr, 2) == -1) {
+					_exit(127);
+				}
+				close(new_stderr); // Not needed anymore
+			}
+			if (redir_stdin) {
+			// Put new_stdout on file desc #0
+				if (dup2(new_stdin, 0) == -1) {
+					_exit(127);
+				}
+				getArgsFromFile();
+				close(new_stdin); // Not needed anymore
+			}
 			if (execvp(args[0], args) ==-1){
 				sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
        		     		perror(errbuf);
@@ -179,27 +197,48 @@ int runcmd(char **cmd){
 		//In parent
 		
 
-		if(!background){
-			wait(&child_status);
-		}
+		
 		if (redir_stdout) {
 			close(new_stdout); // Not needed anymore
 			redir_stdout = 0;
 		}
-		//printf("AWWW SHIT SON IM THE BIG DADDY PROCESS \n");
-		/*do{
-			pid_t tpid=wait(&child_status);
-			if(tpid!=child_pid) {
-				process_terminated(tpid);
-			}
-		}while(tpid!=child_pid);	*/
+		if (redir_stderr) {
+			close(new_stderr); // Not needed anymore
+			redir_stderr = 0;
+		}
+		if(!background){
+			wait(&child_status);
+		}
 	
 		}
 	}
 	return 0;
 	
 }
+void getArgsFromFile(){
+	/*	FILE*fp;
+	char str[1000];
+	fp = fopen (filename, "r" );
+	if(fp==NULL){
+		return -1;
+	}*/
+	char str[1000];
+	while(fgets(str, 1000, stdin) !=NULL){
+		if(strcmp(str, "quit\n")==0){
+			printf("quitting\n");
+			return;
+		}	
+		else{
+			//args[0]=strtok(str, " \n");
+			printf("The command was %s\n", str);
+			//parseArgs(str);
+			//runcmd(args[0]);	
+		}
+	}	
 
+	
+
+}
 void parseArgs(char* line){
 	int i=1;
 	char* temp = NULL;
