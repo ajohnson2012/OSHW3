@@ -106,7 +106,8 @@ int checkForRedirection(int arglen){
 		if(stdoutPtr !=NULL){
 			printf("stdout redirection\n");
 			redir_stdout=1;
-			new_stdin = open(&(args[i][1]), O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+			//printf("file to be used:%s", args[i][1]);
+			new_stdin = open("test.txt", O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
 			if(new_stdout==-1){
 				printf("idk what happened, shit.");
 			}
@@ -133,7 +134,7 @@ int runcmd(char **cmd){
 		if (result == 0){
 			char *cwd;
 			printf("%s \n", getcwd(cwd, 1000));
-			printf("Directory changed\n");
+			//printf("Directory changed\n");
 		}else{
 			switch(result){
 				case EACCES: printf("Permission denied");break;
