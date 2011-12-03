@@ -71,7 +71,7 @@ int checkForRedirection(char* args[], int arglen){
 	char* stderrPtr;
 	char* stdinPtr;
 	char* stdoutPtr;
-	printf("Checking for redirection janx");
+	printf("Checking for redirection janx\n");
 	int i=0;
 	for(i =0; i < arglen; i++){
 		stderrPtr=strstr(args[i], stderr);
