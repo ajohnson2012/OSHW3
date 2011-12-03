@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
+#include <fcntl.h>
 #include "filereader.h"
 
 char* args[10];
@@ -15,7 +16,12 @@ char quit[]= "quit\n";
 char* myShellName; 
 char* homeName;
 int background=0;
-
+int redir_stdout=0;
+int redir_stdin=0;
+int redir_stderr=0;
+int new_stdout=0;
+int new_stdin=0;
+int new_stderr=0;
 
 int main (int argc, char *argv[]){
 	myShellName= getenv("MYPS");
@@ -25,8 +31,7 @@ int main (int argc, char *argv[]){
 	}
 	homeName= getenv("HOME");
 	printf("%s \n", homeName);
-//	pid_t child_pid;
-//	int child_status;
+
 	int returnStatus;
 
 	if(argc>1){
@@ -64,7 +69,7 @@ void clearArray(char ** array, int size){
 	}
 	return;
 }
-int checkForRedirection(char* args[], int arglen){
+int checkForRedirection(int arglen){
 	char * stderr = "2>";
 	char stdin= '<';
 	char stdout = '>';
@@ -78,15 +83,35 @@ int checkForRedirection(char* args[], int arglen){
 		stdinPtr=strchr (args[i], stdin);
 		stdoutPtr=strchr (args[i], stdout);
 		if (stderrPtr !=NULL){
-			
-			printf("stderr redirection\n");
+			printf("stderr redirection turning on.\n");
+			redir_stderr=1;
+			//new_stderr = open(&(args[i][1]), O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+			if (new_stderr == -1) {
+				// Open failed: error-handling here
+				printf("idk what happened, shit.");
+			}
 		}
-		if(stderrPtr !=NULL){
-			printf("stdin redirection\n");
+		
+		if(stdinPtr !=NULL){
+			printf("stdin redirection turning on.\n");
+			redir_stdin=1;
+			//new_stdin = open(&(args[i][1]), O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+			if(new_stdin==-1){
+				printf("idk what happened, shit.");
+			}
+
 		}
+		
 		if(stdoutPtr !=NULL){
 			printf("stdout redirection\n");
+			redir_stdout=1;
+			//printf("file to be used:%s", args[i][1]);
+			new_stdin = open("test.txt", O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+			if(new_stdout==-1){
+				printf("idk what happened, shit.");
+			}
 		}
+		
 	}
 	return 1;
 }
@@ -97,8 +122,8 @@ int runcmd(char **cmd){
     	char* errbuf;
 	if (strcmp(args[0], "cd") == 0){
 		//printf("Result of changing dir was: %d \n", chdir(args[1]));
-		printf("Args[1] is: %s \n", args[1]);
-		printf("Home is: %s \n", homeName);
+		//printf("Args[1] is: %s \n", args[1]);
+		//printf("Home is: %s \n", homeName);
 		int result;
 		if (args[1]==NULL){
 			result=chdir(homeName);
@@ -108,7 +133,7 @@ int runcmd(char **cmd){
 		if (result == 0){
 			char *cwd;
 			printf("%s \n", getcwd(cwd, 1000));
-			printf("Directory changed\n");
+			//printf("Directory changed\n");
 		}else{
 			switch(result){
 				case EACCES: printf("Permission denied");break;
@@ -171,7 +196,7 @@ void parseArgs(char* line){
 		}
 	}
 	args[i+1]=NULL;	
-	checkForRedirection(args, i);
+	checkForRedirection(i);
 }
 
 int findAmpLamp(char* arg){
