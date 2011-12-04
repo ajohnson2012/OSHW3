@@ -25,17 +25,11 @@ int new_stderr=0;
 int main (int argc, char *argv[]){
 	myShellName= getenv("MYPS");
 	if (myShellName == NULL){
-
 		myShellName="mysh$ ";
 	}
 	homeName= getenv("HOME");
-	//printf("%s \n", homeName);
-
 	int returnStatus;
-
 	if(argc>1){
-		//printf("There are %d arguments\n", argc);
-		//printf("The filename to use is: %s\n", argv[1]);
 		returnStatus=readFile(argv[1]);
 		if(returnStatus==-1){
 			printf("ERROR no such file exists");
@@ -56,7 +50,6 @@ int main (int argc, char *argv[]){
 			}	
 			else{
 				args[0]=strtok(text, "\n ");
-			//	printf("The command was %s\n", args[0]);
 				parseArgs(text);
 				runcmd(args);	
 			}
@@ -129,9 +122,6 @@ int runcmd(char **cmd){
 	int child_status;
     	char* errbuf;
 	if (strcmp(args[0], "cd") == 0){
-		//printf("Result of changing dir was: %d \n", chdir(args[1]));
-		//printf("Args[1] is: %s \n", args[1]);
-		//printf("Home is: %s \n", homeName);
 		int result;
 		if (args[1]==NULL){
 			result=chdir(homeName);
