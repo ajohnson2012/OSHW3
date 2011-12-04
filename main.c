@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include <string.h>
 #include "main.h"
 #include <stdlib.h>
@@ -146,7 +146,7 @@ int runcmd(char **cmd){
 		}
 
 	}else{
-		printf("new_stdin is:%d",new_stdin);
+		printf("new_stdin is:%d\n",new_stdin);
 		child_pid = vfork();
 
 		if (child_pid == -1){
