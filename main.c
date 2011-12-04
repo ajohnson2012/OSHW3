@@ -47,6 +47,9 @@ int main (int argc, char *argv[]){
 	while (flag){
 		clearArray(args, 10);
 		background=0;
+		redir_stdout=0;
+		redir_stdin=0;
+		redir_stderr=0;
 		printf("%s", myShellName);	
 		if (fgets(text, 1000, stdin)){
 			if(strcmp(text, quit)==0){
@@ -100,7 +103,7 @@ int checkForRedirection(char* arg){
 		printf("stdin redirection turning on.\n");
 		redir_stdin=1;
 		fileLoc=stdinPtr+1;
-		new_stdin = open(fileLoc, O_RDONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+		new_stdin = open(fileLoc, O_RDONLY);
 		if(new_stdin==-1){
 			printf("idk what happened, shit.");
 		}
@@ -154,6 +157,7 @@ int runcmd(char **cmd){
 		}
 
 	}else{
+		printf("new_stdin is:%d",new_stdin);
 		child_pid = vfork();
 
 		if (child_pid == -1){
@@ -180,6 +184,7 @@ int runcmd(char **cmd){
 			}
 			if (redir_stdin) {
 			// Put new_stdout on file desc #0
+				printf("In child process with stdin redir error, new_stdin=%d\n",new_stdin);
 				if (dup2(new_stdin, 0) == -1) {
 					_exit(127);
 				}
@@ -222,8 +227,10 @@ void getArgsFromFile(){
 	if(fp==NULL){
 		return -1;
 	}*/
+	printf("getting args from file\n");
 	char str[1000];
 	while(fgets(str, 1000, stdin) !=NULL){
+		printf("%s\n",str);
 		if(strcmp(str, "quit\n")==0){
 			printf("quitting\n");
 			return;
