@@ -29,14 +29,14 @@ int main (int argc, char *argv[]){
 	}
 	homeName= getenv("HOME");
 	int returnStatus;
-	if(argc>1){
+	/*if(argc>1){
 		returnStatus=readFile(argv[1]);
 		if(returnStatus==-1){
 			printf("ERROR no such file exists");
 			return -1;
 		}
 		return 0;
-	}
+	}*/
 	while (flag){
 		clearArray(args, 10);
 		background=0;
@@ -63,24 +63,23 @@ void clearArray(char ** array, int size){
 	return;
 }
 int checkForRedirection(char* arg){
-	char * stderr = "2>";
-	char stdin= '<';
-	char stdout = '>';
+	char * stderrchar = "2>";
+	char stdinchar= '<';
+	char stdoutchar = '>';
 	char* stderrPtr;
 	char* stdinPtr;
 	char* stdoutPtr;
 	char* fileLoc;
 
-	
-	stderrPtr=strstr(arg, stderr);
-	stdinPtr=strchr (arg, stdin);
-	stdoutPtr=strchr (arg, stdout);
+	stderrPtr=strstr(arg, stderrchar);
+	stdinPtr=strchr (arg, stdinchar);
+	stdoutPtr=strchr (arg, stdoutchar);
 	if (stderrPtr !=NULL){
-		printf("stderr redirection turning on.\n");
+	///	printf("stderr redirection turning on.\n");
 		redir_stderr=1;
-		fileLoc=stdoutPtr+2;
+		fileLoc=stderrPtr+2;
 		printf("%s\n",fileLoc);
-		new_stdout = open(fileLoc, O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
+		new_stderr = open(fileLoc, O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
 
 		if (new_stderr == -1) {
 			// Open failed: error-handling here
@@ -90,7 +89,7 @@ int checkForRedirection(char* arg){
 	}
 		
 	if(stdinPtr !=NULL){
-		printf("stdin redirection turning on.\n");
+	//	printf("stdin redirection turning on.\n");
 		redir_stdin=1;
 		fileLoc=stdinPtr+1;
 		//printf("file location is:%s\n",fileLoc);
@@ -102,11 +101,11 @@ int checkForRedirection(char* arg){
 	}
 	
 	if(stdoutPtr !=NULL){
-		printf("stdout redirection\n");
+	//	printf("stdout redirection\n");
 		redir_stdout=1;
 		//printf("file to be used:%s", args[i][1]);
 		fileLoc=stdoutPtr+1;
-		printf("%s\n",fileLoc);
+	//	printf("%s\n",fileLoc);
 		new_stdout = open(fileLoc, O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
 		if(new_stdout==-1){
 			printf("idk what happened, shit.");
@@ -228,29 +227,9 @@ void getArgsFromFile(){
 	char command[1000];
 	int count=0;
 
-	//if(stdin==NULL){
 
-	//	printf("stdin is null");
-//	}
 	while(fgets(command, 1000, stdin)){
 
-		printf("A lINE!!!:%s\n",command);
-//while(read(stdin, str, 1)>0){
-
-		/*printf("read: %c from file\n", str[0]);
-	
-
-		if(str[0]==10){
-			printf("The command was: %s\n",command);
-			//command="";
-		}	
-	
-				
-		else{
-			command[count]=str[0];
-			count++;
-		}
-		str[0]=NULL;*/
 	}	
 }
 
