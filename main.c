@@ -95,7 +95,7 @@ int checkForRedirection(char* arg){
 		printf("stdin redirection turning on.\n");
 		redir_stdin=1;
 		fileLoc=stdinPtr+1;
-		new_stdin = open(fileLoc, O_RDONLY);
+		new_stdin = open(fileLoc, O_RDONLY,(mode_t)0644);
 		if(new_stdin==-1){
 			printf("idk what happened, shit.");
 		}
@@ -178,8 +178,9 @@ int runcmd(char **cmd){
 					printf("SHIIITT");
 					_exit(127);
 				}
-				//getArgsFromFile();
 				close(new_stdin); // Not needed anymore
+		
+				getArgsFromFile();
 			}
 			if (execvp(args[0], args) ==-1){
 				sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
@@ -223,10 +224,19 @@ void getArgsFromFile(){
 	char ch;
 	char command[1000];
 	int count=0;
-	while(read(new_stdin, str, 1)>0){
+	char *line;
 
-		printf("read: %c from file\n", str[0]);
+	//if(stdin==NULL){
 
+	//	printf("stdin is null");
+//	}
+	while(fgets(line, 1000, stdin)){
+
+		printf("A lINE!!!:%s\n",line);
+//while(read(stdin, str, 1)>0){
+
+		/*printf("read: %c from file\n", str[0]);
+	
 
 		if(str[0]==10){
 			printf("The command was: %s\n",command);
@@ -238,7 +248,7 @@ void getArgsFromFile(){
 			command[count]=str[0];
 			count++;
 		}
-		str[0]=NULL;
+		str[0]=NULL;*/
 	}	
 }
 
