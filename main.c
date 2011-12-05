@@ -29,14 +29,15 @@ int main (int argc, char *argv[]){
 	}
 	homeName= getenv("HOME");
 	int returnStatus;
-	/*if(argc>1){
+	if(argc>1){
 		returnStatus=readFile(argv[1]);
 		if(returnStatus==-1){
 			printf("ERROR no such file exists");
 			return -1;
 		}
+		flag=0;
 		return 0;
-	}*/
+	}
 	while (flag){
 		clearArray(args, 10);
 		background=0;
@@ -214,13 +215,13 @@ int runcmd(char **cmd){
 	return 0;
 	
 }
-void getArgsFromFile(){
+/*void getArgsFromFile(){
 	/*	FILE*fp;
 	char str[1000];
 	fp = fopen (filename, "r" );
 	if(fp==NULL){
 		return -1;
-	}*/
+	}
 //	printf("getting args from file\n");
 	char str[1];
 	char ch;
@@ -231,7 +232,7 @@ void getArgsFromFile(){
 	while(fgets(command, 1000, stdin)){
 
 	}	
-}
+}*/
 
 void parseArgs(char* line){
 	int i=1;
