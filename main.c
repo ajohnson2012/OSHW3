@@ -78,7 +78,7 @@ int checkForRedirection(char* arg){
 	///	printf("stderr redirection turning on.\n");
 		redir_stderr=1;
 		fileLoc=stderrPtr+2;
-		printf("%s\n",fileLoc);
+//		printf("%s\n",fileLoc);
 		new_stderr = open(fileLoc, O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
 
 		if (new_stderr == -1) {
