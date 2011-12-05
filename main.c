@@ -21,7 +21,7 @@ int redir_stderr=0;
 int new_stdout=0;
 int new_stdin=0;
 int new_stderr=0;
-
+char* lineHLDR;
 int main (int argc, char *argv[]){
 	myShellName= getenv("MYPS");
 	if (myShellName == NULL){
@@ -40,10 +40,8 @@ int main (int argc, char *argv[]){
 	while (flag){
 		clearArray(args, 10);
 		background=0;
-		redir_stdout=0;
-		redir_stdin=0;
-		redir_stderr=0;
 		printf("%s", myShellName);	
+		//lineHLDR=stdin;
 		if (fgets(text, 1000, stdin)){
 			if(strcmp(text, quit)==0){
 				return 0;
@@ -95,7 +93,8 @@ int checkForRedirection(char* arg){
 		printf("stdin redirection turning on.\n");
 		redir_stdin=1;
 		fileLoc=stdinPtr+1;
-		new_stdin = open(fileLoc, O_RDONLY,(mode_t)0644);
+		//printf("file location is:%s\n",fileLoc);
+		new_stdin = open(fileLoc, O_RDONLY);
 		if(new_stdin==-1){
 			printf("idk what happened, shit.");
 		}
@@ -146,7 +145,7 @@ int runcmd(char **cmd){
 		}
 
 	}else{
-		printf("new_stdin is:%d\n",new_stdin);
+		//printf("new_stdin is:%d\n",new_stdin);
 		child_pid = vfork();
 
 		if (child_pid == -1){
@@ -173,13 +172,17 @@ int runcmd(char **cmd){
 			}
 			if (redir_stdin) {
 			// Put new_stdout on file desc #0
-				printf("In child process with stdin redir error, new_stdin=%d\n",new_stdin);
+				//printf("In child process with stdin redir error, new_stdin=%d\n",new_stdin);
+				//char* strng;	
 				if (dup2(new_stdin, 0) == -1) {
 					printf("SHIIITT");
 					_exit(127);
 				}
 				close(new_stdin); // Not needed anymore
-		
+				//strng[0] = '\0';
+				//read(strng,new_stdin,8);
+				//printf("file has %s\n",strng);
+				
 				getArgsFromFile();
 			}
 			if (execvp(args[0], args) ==-1){
@@ -203,7 +206,7 @@ int runcmd(char **cmd){
 			redir_stderr = 0;
 		}
 		if(!background){
-			wait(&child_status);
+			waitpid(&child_status,NULL,0);
 			//Need to add stuff to redirect output
 		}
 	
@@ -219,20 +222,19 @@ void getArgsFromFile(){
 	if(fp==NULL){
 		return -1;
 	}*/
-	printf("getting args from file\n");
+//	printf("getting args from file\n");
 	char str[1];
 	char ch;
 	char command[1000];
 	int count=0;
-	char *line;
 
 	//if(stdin==NULL){
 
 	//	printf("stdin is null");
 //	}
-	while(fgets(line, 1000, stdin)){
+	while(fgets(command, 1000, stdin)){
 
-		printf("A lINE!!!:%s\n",line);
+		printf("A lINE!!!:%s\n",command);
 //while(read(stdin, str, 1)>0){
 
 		/*printf("read: %c from file\n", str[0]);
@@ -256,9 +258,6 @@ void parseArgs(char* line){
 	int i=1;
 	char* temp = NULL;
 	while((temp=strtok(NULL,"\n "))!=NULL&&(i<10)){
-		//If temp has $, get env var of temp and set to args
-		//temp = parseOutPath(temp);
-
 		if(!findAmpLamp(temp) &&!checkForRedirection(temp)){
 			args[i] = temp;
 			i++;
@@ -270,7 +269,7 @@ void parseArgs(char* line){
 
 int findAmpLamp(char* arg){
 	if(strcmp(arg,"&")==0){
-		printf("Found that & in arg:%s\n",arg);
+	//	printf("Found that & in arg:%s\n",arg);
 		background=1;
 		return 1;
 	}else return 0;
