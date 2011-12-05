@@ -183,7 +183,7 @@ int runcmd(char **cmd){
 				//read(strng,new_stdin,8);
 				//printf("file has %s\n",strng);
 				
-				getArgsFromFile();
+			//	getArgsFromFile();
 			}
 			if (execvp(args[0], args) ==-1){
 				sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
@@ -206,7 +206,7 @@ int runcmd(char **cmd){
 			redir_stderr = 0;
 		}
 		if(!background){
-			waitpid(&child_status,NULL,0);
+			waitpid(child_pid,NULL,0);
 			//Need to add stuff to redirect output
 		}
 	
