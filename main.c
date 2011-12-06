@@ -92,7 +92,7 @@ int checkForRedirection(char* arg){
 
 		if (new_stderr == -1) {
 			// Open failed: error-handling here
-			printf("idk what happened, shit.");
+			perror(NULL);
 		}
 		return 1;
 	}
@@ -102,7 +102,7 @@ int checkForRedirection(char* arg){
 		fileLoc=stdinPtr+1;
 		new_stdin = open(fileLoc, O_RDONLY);
 		if(new_stdin==-1){
-			printf("idk what happened, shit.");
+			perror(NULL);
 		}
 		return 1;
 	}
@@ -112,7 +112,7 @@ int checkForRedirection(char* arg){
 		fileLoc=stdoutPtr+1;
 		new_stdout = open(fileLoc, O_WRONLY|O_CREAT|O_TRUNC,(mode_t)0644);
 		if(new_stdout==-1){
-			printf("idk what happened, shit.");
+			perror(NULL);
 		}
 		return 1;
 	}
@@ -183,6 +183,7 @@ int runcmd(char **cmd){
 			if(!background){
 				waitpid(child_pid,NULL,0);
 				//Need to add stuff to redirect output
+				
 			}
 		}
 	}
