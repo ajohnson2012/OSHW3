@@ -14,12 +14,12 @@ int readFile(char* filename){
 	
 	while(fgets(str, 1000,fp) !=NULL){
 		if(strcmp(str, "quit\n")==0){
-			printf("quitting\n");
+//			printf("quitting\n");
 			return 0;
 		}	
 		else{
 			args[0]=strtok(str, " \n");
-			printf("The command was %s\n", args[0]);
+//			printf("The command was %s\n", args[0]);
 			parseArgs(str);
 			runcmd(args[0]);	
 		}
