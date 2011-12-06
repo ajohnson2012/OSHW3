@@ -57,12 +57,12 @@ int main (int argc, char *argv[]){
 	return 0;
 }
 int checkShellName(char * name, int len){
-	//Returns 1 if string is only spaces or tabs, 0 if it has valid chars
+	//Returns 0 if string is only spaces or tabs, 1 if it has valid chars
 	int i;
-	int flag=1;
+	int flag=0;
 	for (i=0; i < len; i++){
 		if (name[i]!=' ' || name[i] != "\t"){
-			flag=0;
+			flag=1;
 		}
 	}
 	return flag;
