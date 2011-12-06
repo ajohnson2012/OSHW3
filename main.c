@@ -24,7 +24,7 @@ int new_stderr=0;
 char* lineHLDR;
 int main (int argc, char *argv[]){
 	myShellName= getenv("MYPS");
-	if (myShellName == NULL){
+	if (myShellName == NULL || checkShellName(myShellName, strlen(myShellName))){
 		myShellName="mysh$ ";
 	}
 	homeName= getenv("HOME");
@@ -54,6 +54,17 @@ int main (int argc, char *argv[]){
 		}
 	}
 	return 0;
+}
+int checkShellName(char * name, int len){
+	//Returns 1 if string is only spaces or tabs, 0 if it has valid chars
+	int i;
+	int flag=1;
+	for (i=0; i < len; i++){
+		if (name[i]!=' ' || name[i] != "\t"){
+			flag=0;
+		}
+	}
+	return flag;
 }
 void clearArray(char ** array, int size){
 	int i;
