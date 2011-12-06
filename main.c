@@ -23,6 +23,7 @@ int new_stdin=0;
 int new_stderr=0;
 char* lineHLDR;
 int main (int argc, char *argv[]){
+//	setenv("MYPS", "		",1);
 	myShellName= getenv("MYPS");
 	if (myShellName == NULL || checkShellName(myShellName, strlen(myShellName))){
 		myShellName="mysh$ ";
@@ -49,8 +50,10 @@ int main (int argc, char *argv[]){
 			}	
 			else{
 				args[0]=strtok(text, "\n ");
-				parseArgs(text);
-				runcmd(args);	
+				if (args[0]!=NULL){
+					parseArgs(text);
+					runcmd(args);
+				}
 			}
 		}
 	}
@@ -58,13 +61,11 @@ int main (int argc, char *argv[]){
 }
 int checkShellName(char * name, int len){
 	//Returns 0 if string is only spaces or tabs, 1 if it has valid chars
-	int i;
 	int flag=0;
-	for (i=0; i < len; i++){
-		if (name[i]!=' ' || name[i] != "\t"){
-			flag=1;
-		}
-	}
+	char * temp=NULL;
+	temp =strtok(name, " \t");
+	if (temp==NULL)
+		flag=1;
 	return flag;
 }
 void clearArray(char ** array, int size){
@@ -141,18 +142,20 @@ int runcmd(char **cmd){
 		if (result != 0){
 			//char *cwd;
 			//getcwd(cwd, 1000));
-			//printf("Directory changed\n");
-	
-			switch(result){
-				case EACCES: printf("Permission denied");break;
-				case EIO: printf("An input output error occurred"); break;
-				case ENAMETOOLONG: printf("Path is to long"); break;
-				case ENOTDIR: printf("A component of path not a diretory"); break;
-				case ENOENT: printf("No such file or directory"); printf("enoent\n"); 
-				//default: perror("Couldn't change directory to %s", (char *) args[1]);
-				printf("Couldn't change directory to %s",args[1]);
+			
+			perror(NULL);
+			/*switch(result){
+				case EACCES: sprintf(errbuf,"Permission denied");break;
+				case EIO: sprintf(errbuf,"An input output error occurred"); break;
+				case ENAMETOOLONG: sprintf(errbuf,"Path is to long"); break;
+				case ENOTDIR: sprintf(errbuf,"A component of path not a diretory"); break;
+				case ENOENT: sprintf(errbuf,"No such file or directory");  
+				//default: sprintf(errbuf,"Couldn't change directory");
+				//sprintf("Couldn't change directory to %s",args[1]);
+				perror(errbuf);
 				_exit(1);
-			}
+			}*/
+			//perror(errbuf);
 		}
 
 	}else{
@@ -197,8 +200,8 @@ int runcmd(char **cmd){
 			//	getArgsFromFile();
 			}
 			if (execvp(args[0], args) ==-1){
-				sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
-       		     		perror(errbuf);
+				//sprintf(errbuf,"%s: child process id =%d",myShellName,child_pid);
+       		     		perror(NULL);
 				_exit(1);
 			}
 		_exit(0);
